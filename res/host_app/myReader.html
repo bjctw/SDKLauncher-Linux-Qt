@@ -1,0 +1,125 @@
+<html>
+    <head>
+        <script src="lib/jquery-1.8.2.js" type="text/javascript"></script>
+        <script src="lib/underscore.js" type="text/javascript"></script>
+        <script src="lib/backbone.js" type="text/javascript"></script>
+        <script src="js/readium_sdk.js" type="text/javascript"></script>
+        <script src="js/helpers.js" type="text/javascript"></script>
+        <script src="js/models/trigger.js" type="text/javascript"></script>
+        <script src="js/models/bookmark_data.js" type="text/javascript"></script>
+        <script src="js/models/spine_item.js" type="text/javascript"></script>
+        <script src="js/models/spine.js" type="text/javascript"></script>
+        <script src="js/models/fixed_page_spread.js" type="text/javascript"></script>
+        <script src="js/models/package.js" type="text/javascript"></script>
+        <script src="js/models/current_pages_info.js" type="text/javascript"></script>
+        <script src="js/models/page_open_request.js" type="text/javascript"></script>
+        <script src="js/models/viewer_settings.js" type="text/javascript"></script>
+        <script src="js/models/style_collection.js" type="text/javascript"></script>
+        <script src="js/models/media_overlay.js" type="text/javascript"></script>
+        <script src="lib/epub_cfi.js" type="text/javascript"></script>
+        <script src="js/views/cfi_navigation_logic.js" type="text/javascript"></script>
+        <script src="js/views/reflowable_view.js" type="text/javascript"></script>
+        <script src="js/views/one_page_view.js" type="text/javascript"></script>
+        <script src="js/views/fixed_view.js" type="text/javascript"></script>
+        <script src="js/views/reader_view.js" type="text/javascript"></script>
+        <script src="host_app_feedback.js" type="text/javascript"></script>
+
+        <!--reflowable view-->
+        <script type="text/html" id="template-reflowable-view">
+            <div id="viewport_reflowable" class="clearfix">
+                <iframe scrolling="no" id="epubContentIframe"></iframe>
+            </div>
+        </script>
+
+        <!-- Fixed Layout View -->
+        <script type="text/html" id="template-fixed-view">
+            <div id="viewport_fixed">
+                <div id="spread-wrap" class="clearfix">
+                </div>
+            </div>
+        </script>
+
+        <script type="text/html" id="template-ope-fixed-page-view">
+            <div class="fixed-page-wrap">
+                <iframe class="fixed_iframe"></iframe>
+            </div>
+        </script>
+
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                "use strict";
+
+                ReadiumSDK.reader = new ReadiumSDK.Views.ReaderView({el:$("#main")});
+                ReadiumSDK.trigger("ReaderInitialized");
+                
+
+                ///////////////////////////////////
+                //DEBUGGING CODE
+
+                var packageData = {
+                package : {
+
+                    rendition_layout: "pre-paginated",
+                    rootUrl: "",
+
+                     spine : {
+
+                            items: [
+                                {idref: 0, href: "page-blanche-20130322/EPUB/Content/cover.xhtml", page_spread: "page-spread-right"},
+                                {idref: 1, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_000.xhtml", page_spread: "page-spread-left"},
+                                {idref: 2, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_001.xhtml", page_spread: "page-spread-right"},
+                                {idref: 3, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_002.xhtml", page_spread: "page-spread-left"},
+                                {idref: 4, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_003.xhtml", page_spread: "page-spread-right"},
+                                {idref: 5, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_004.xhtml", page_spread: "page-spread-left"},
+                                {idref: 6, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_005.xhtml", page_spread: "page-spread-right"},
+                                {idref: 7, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_006.xhtml", page_spread: "page-spread-left"},
+                                {idref: 8, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_007.xhtml", page_spread: "page-spread-right"},
+                                {idref: 9, href: "page-blanche-20130322/EPUB/Content/PageBlanche_Page_008.xhtml", page_spread: "page-spread-left"}
+                            ]
+                     }
+				}
+                };
+
+                //ReadiumSDK.reader.openBook(packageData);
+
+                $("#leftBtn").on("click", function () {
+                    ReadiumSDK.reader.openPageLeft();
+                });
+
+                $("#rightBtn").on("click", function () {
+                    ReadiumSDK.reader.openPageRight();
+                });
+                //
+                //////////////////////////////////
+
+            });
+            
+            openBook = function(packageData){
+            	ReadiumSDK.reader.openBook(packageData);
+            }
+            
+           	function LoadFile() {
+                //check if Qt object available
+                if(typeof DREpubInterface !== "undefined"){
+                    console.log("Call Qt native function.");
+                    DREpubInterface.LoadFile();
+                }
+                else{
+                    console.log("Qt object not defined!");
+                }
+			}
+
+        </script>
+
+        <link rel="stylesheet" type="text/css" href="reader.css" />
+    </head>
+    <body>
+    <div style="float:left; position: absolute; left: 10px; top: 10px; z-index: 100;">
+    <button id="leftBtn"> < </button>     <button id="rightBtn"> > </button>
+    <button id="testBtn" onclick="LoadFile();"> Open... </button>
+    </div>
+    <div id="main" style="height: 100%; width: 100%;"></div>
+     </body>
+</html>
